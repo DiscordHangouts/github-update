@@ -87,7 +87,7 @@ class GithubUpdater {
 		return fs.readdir(paths).filter((file) => fs.stat(path.join(paths, file)).isDirectory());
 	}
 
-	checkVersion(callback) {
+	static checkVersion(callback) {
 		const source = this.sources[this.options.source];
 		const packageFile = JSON.parse(fs.readFile(`${this.options.localPath}/${this.options.localPath}`)) || { version: '0.0.0' };
 
@@ -112,7 +112,7 @@ class GithubUpdater {
 		}).on('error', (err) => callback(err.null, null));
 	}
 
-	async updateRepository(callback) {
+	static updateRepository(callback) {
 		if (this.options.debug) console.log(`[Github Updater] Starting update job...`);
 
 		const source = this.sources[this.options.source];
