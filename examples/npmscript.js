@@ -1,39 +1,34 @@
 var options = {
-    repo        : "Nioxed/github-update",
-    branch      : "master",
-    packageFile : "package.json",
-    localPath   : "./repo-npmscript",
-    runScript   : "exampleScript",
-    debug       : true
-        
-}
-    
+	repo: 'Nioxed/github-update',
+	branch: 'master',
+	packageFile: 'package.json',
+	localPath: './repo-npmscript',
+	runScript: 'exampleScript',
+	debug: true
+
+};
+
 var updater = require('../')(options);
 
 
-updater.check( ( error, upToDate ) => {
-    if(error){ throw error; }
+updater.check((error, upToDate) => {
+	if (error) { throw error; }
 
-    if(upToDate){
-		
+	if (upToDate) {
 		console.log('App is up to date');
-        StartApp();
-		
-    }else{
+		startApp();
+	} else {
+		updater.update((success, err) => {
+			if (!success) { throw err; }
 
-        updater.update( (success, error) => {
-			if(!success){ throw error; };
-				
-			console.log('Updated App')
-			StartApp();
-        })
+			console.log('Updated App');
+			startApp();
+		});
+	}
+});
 
-    }
-
-})
-
-function StartApp(){
-    console.log("App Started");
-    process.exit(0);
+function startApp() {
+	console.log('App Started');
+	process.exit(0);
 }
 
