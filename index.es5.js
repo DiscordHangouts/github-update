@@ -1,13 +1,14 @@
 /* eslint-disable new-cap */
-import url from 'url';
-import path from 'path';
-import https from 'https';
-import { execSync } from 'child_process';
-import { Extract } from 'unzip';
-import fs from 'fs-nextra';
-import { DEFAULTS, SEMVER } from './Constants';
+const url = require('url');
+const path = require('path');
+const https = require('https');
+const { execSync } = require('child_process');
+const { Extract } = require('unzip');
+const fs = require('fs-nextra');
 
-export default class GithubUpdater {
+const { DEFAULTS, SEMVER } = require('./Constants');
+
+class GithubUpdater {
 
 	constructor(options) {
 		this.options = Object.assign(DEFAULTS, options);
@@ -183,3 +184,5 @@ export default class GithubUpdater {
 
 
 }
+
+module.exports = GithubUpdater;
