@@ -13,11 +13,12 @@
   "author": "Nioxed <admin@nioxed.com> (https://nioxed.com)",
   "license": "ISC",
   "dependencies": {
-    "compare-versions": "^3.2.1",
     "fs-nextra": "^0.4.7",
     "unzip": "^0.1.11"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^6.8.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DiscordHangouts/github-update.git"
