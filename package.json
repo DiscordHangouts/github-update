@@ -20,7 +20,7 @@
   "license": "ISC",
   "dependencies": {
     "fs-nextra": "^0.4.7",
-    "unzip": "^0.1.11"
+    "unzipper": "^0.10.11"
   },
   "devDependencies": {
     "eslint": "^6.8.0"

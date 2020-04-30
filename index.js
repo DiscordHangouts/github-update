@@ -3,7 +3,7 @@ const url = require('url');
 const path = require('path');
 const https = require('https');
 const { execSync } = require('child_process');
-const { Extract } = require('unzip');
+const { Extract } = require('unzipper');
 const fs = require('fs-nextra');
 
 const { DEFAULTS, SEMVER } = require('./Constants');
