@@ -1,5 +1,5 @@
 {
-  "name": "github-updater",
+  "name": "github-update",
   "version": "1.2.1",
   "description": "A simple package for fetching repo updates from github using package.json",
   "main": "index.js",
