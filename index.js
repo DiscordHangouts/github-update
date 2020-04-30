@@ -83,16 +83,12 @@ class GithubUpdater {
 		return arr;
 	}
 
-	getFolder(paths) {
-		return fs.readdir(paths).filter((file) => fs.stat(path.join(paths, file)).isDirectory());
-	}
-
 	async checkVersion(callback) {
 		const source = this.sources[this.options.source];
 
-		if (!fs.pathExists(this.options.localPath)) {
+		if (!await fs.pathExists(this.options.localPath)) {
 			if (this.options.debug) console.log(`[Github Updater] Creating ${this.options.localPath} because it does not exist yet.`);
-			fs.mkdir(this.options.localPath);
+			await fs.mkdir(this.options.localPath);
 		}
 
 		let packageFile;
@@ -103,7 +99,7 @@ class GithubUpdater {
 		}
 
 		if (this.options.debug) console.log(`[Github Updater] Found local package version to be: ${packageFile.version}\n[Github Updater] Starting update & Getting ${source.rawfile}`);
-		https.get(source.rawfile, (response) => {
+		await https.get(source.rawfile, (response) => {
 			let data = '';
 
 			if (this.options.debug) console.log(`[Github Updater] Got Status: ${response.statusCode}.`);
@@ -129,14 +125,14 @@ class GithubUpdater {
 		const source = this.sources[this.options.source];
 		const tempFolder = './github-updater-temp';
 
-		if (!fs.pathExists(tempFolder)) {
+		if (!await fs.pathExists(tempFolder)) {
 			if (this.options.debug) console.log(`[Github Updater] Creating ${this.options.localPath} because it does not exist yet.`);
-			fs.mkdir(tempFolder);
+			await fs.mkdir(tempFolder);
 		}
 
 		if (this.options.debug) console.log(`[Github Updater] Getting: ${source.download}`);
 
-		const downloadRepo = fs.createWriteStream(`${tempFolder}/repo.zip`);
+		const downloadRepo = fs.createWriteStream(`${tempFolder}/repo.zip`); // <-----
 		https.get(source.download, (response) => {
 			response.pipe(downloadRepo);
 		});
@@ -147,7 +143,10 @@ class GithubUpdater {
 				const unzipRepo = fs.createReadStream(`${tempFolder}/repo.zip`);
 				unzipRepo.pipe(Extract({ path: `${tempFolder}/repo` }))
 					.on('close', async () => {
-						const folders = this.getFolder(`${tempFolder}/repo`);
+						const getFolder = async (parth) => await fs.readdir(parth); // .filter((folds) => fs.statSync(path.join(parth, folds)).isDirectory());
+						console.log(getFolder(`${tempFolder}/repo`));
+						const folders = getFolder(`${tempFolder}/repo`);
+						console.log(folders);
 						folders.forEach(async (fold) => {
 							await this.copyFolder({ tempFolder, fold });
 							if (String(this.options.packages).toLowerCase() === 'npm' || String(this.options.packages).toLowerCase() === 'yarn') await this.runInstall(callback);
