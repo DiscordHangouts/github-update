@@ -1,6 +1,13 @@
 # github-version-updater
 Compares package.json version numbers and downloads new release if available.
 
+## Original Developer
+This is a forked version of Nioxed's github-updater. All original credit goes to him.
+Github-Version-Updater has been rewritten for better code quality and is up to date with no vulnerabilities.
+
+See here: https://www.npmjs.com/package/github-update
+See here: https://github.com/Nioxed/github-update
+
 ## Usage
 Using the **check** and **update** methods you can quickly create a simple update script.
 ```js
