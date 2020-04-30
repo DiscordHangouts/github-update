@@ -89,7 +89,13 @@ class GithubUpdater {
 
 	async checkVersion(callback) {
 		const source = this.sources[this.options.source];
-		const packageFile = JSON.parse(fs.readFile(`${this.options.localPath}/${this.options.packageFile}`)) || { version: '0.0.0' };
+
+		let packageFile;
+		try {
+			packageFile = JSON.parse(fs.readFileSync(`${this.options.localPath}/${this.options.packageFile}`));
+		} catch (ex) {
+			packageFile = { version: '0.0.0' };
+		}
 
 		if (this.options.debug) console.log(`[Github Updater] Found local package version to be: ${packageFile.version}\n[Github Updater] Starting update & Getting ${source.rawfile}`);
 		https.get(source.rawfile, (response) => {
