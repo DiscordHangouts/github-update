@@ -79,7 +79,7 @@ const DEFAULTS = {
     runScript: '',
     
     // Spams console.log() with whatever we're doing.
-	debug: false
+    debug: false
 }
 ```
 
