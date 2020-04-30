@@ -90,6 +90,11 @@ class GithubUpdater {
 	async checkVersion(callback) {
 		const source = this.sources[this.options.source];
 
+		if (!fs.pathExists(this.options.localPath)) {
+			if (this.options.debug) console.log(`[Github Updater] Creating ${this.options.localPath} because it does not exist yet.`);
+			fs.mkdir(this.options.localPath);
+		}
+
 		let packageFile;
 		try {
 			packageFile = JSON.parse(fs.readFileSync(`${this.options.localPath}/${this.options.packageFile}`));
