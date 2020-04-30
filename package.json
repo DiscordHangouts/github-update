@@ -1,16 +1,22 @@
 {
-  "name": "github-update",
-  "version": "1.2.0",
-  "description": "A Simple package for fetching repo updates from github using package.json",
+  "name": "github-updater",
+  "version": "1.2.1",
+  "description": "A simple package for fetching repo updates from github using package.json",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "exampleScript": "echo 'Hello World'"
   },
   "keywords": [
-    "github"
+    "github",
+    "updater",
+    "github updater"
   ],
-  "author": "Nioxed <admin@nioxed.com> (https://nioxed.com)",
+  "author": "Kashall <jordpjones@gmail.com> (https://github.com/DiscordHangouts)",
+  "maintainers": [
+    "Kashall <jordpjones@gmail.com> (https://github.com/DiscordHangouts)",
+    "Nioxed <admin@nioxed.com> (https://nioxed.com)"
+  ],
   "license": "ISC",
   "dependencies": {
     "fs-nextra": "^0.4.7",
@@ -18,6 +24,9 @@
   },
   "devDependencies": {
     "eslint": "^6.8.0"
+  },
+  "directories": {
+    "example": "examples"
   },
   "repository": {
     "type": "git",
