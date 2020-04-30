@@ -152,7 +152,7 @@ class GithubUpdater {
 					});
 			});
 		}).on('error', (err) => {
-			fs.unlink(downloadRepo);
+			fs.unlink(`${tempFolder}/repo.zip`);
 			return callback(err.message);
 		});
 	}
