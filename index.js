@@ -5,6 +5,7 @@ const https = require('https');
 const { execSync } = require('child_process');
 const { Extract } = require('unzipper');
 const fs = require('fs-nextra');
+const fse = require('fs-extra');
 
 const { DEFAULTS, SEMVER } = require('./Constants');
 
@@ -93,7 +94,7 @@ class GithubUpdater {
 
 		let packageFile;
 		try {
-			packageFile = JSON.parse(fs.readFileSync(`${this.options.localPath}/${this.options.packageFile}`));
+			packageFile = JSON.parse(fse.readFileSync(`${this.options.localPath}/${this.options.packageFile}`));
 		} catch (ex) {
 			packageFile = { version: '0.0.0' };
 		}
@@ -112,9 +113,9 @@ class GithubUpdater {
 			return response.on('end', () => {
 				const parsedData = JSON.parse(data);
 				if (this.options.debug) console.log('[Github Updater] Update check finished.');
-				const uptodate = this.compareVersions(parsedData.version, packageFile.version);
-				if (this.options.debug) console.log(`[Github Updater] Local repository is ${uptodate ? 'out of date.' : 'up to date.'}`);
-				return callback(null, uptodate);
+				const needToBeUpdated = this.compareVersions(parsedData.version, packageFile.version);
+				if (this.options.debug) console.log(`[Github Updater] Local repository is ${needToBeUpdated ? 'out of date.' : 'up to date.'}`);
+				return callback(null, needToBeUpdated);
 			});
 		}).on('error', (err) => callback(err.null, null));
 	}
@@ -132,7 +133,7 @@ class GithubUpdater {
 
 		if (this.options.debug) console.log(`[Github Updater] Getting: ${source.download}`);
 
-		const downloadRepo = fs.createWriteStream(`${tempFolder}/repo.zip`); // <-----
+		const downloadRepo = fs.createWriteStream(`${tempFolder}/repo.zip`);
 		https.get(source.download, (response) => {
 			response.pipe(downloadRepo);
 		});
@@ -140,13 +141,12 @@ class GithubUpdater {
 		downloadRepo.on('finish', () => {
 			downloadRepo.close(() => {
 				if (this.options.debug) console.log(`[Github Updater] Unzipping repository...`);
-				const unzipRepo = fs.createReadStream(`${tempFolder}/repo.zip`);
+				const unzipRepo = fse.createReadStream(`${tempFolder}/repo.zip`);
 				unzipRepo.pipe(Extract({ path: `${tempFolder}/repo` }))
 					.on('close', async () => {
-						const getFolder = async (parth) => await fs.readdir(parth); // .filter((folds) => fs.statSync(path.join(parth, folds)).isDirectory());
-						console.log(getFolder(`${tempFolder}/repo`));
+						// thx @pravdomil
+						const getFolder = parth => fse.readdirSync(parth).filter(folder => fse.statSync(path.join(parth, folder)).isDirectory());
 						const folders = getFolder(`${tempFolder}/repo`);
-						console.log(folders);
 						folders.forEach(async (fold) => {
 							await this.copyFolder({ tempFolder, fold });
 							if (String(this.options.packages).toLowerCase() === 'npm' || String(this.options.packages).toLowerCase() === 'yarn') await this.runInstall(callback);
@@ -163,7 +163,7 @@ class GithubUpdater {
 
 	async copyFolder({ tempFolder, fold }) {
 		if (this.options.debug) console.log(`[Github Updater] Moving ${tempFolder}/repo/${fold} to ${this.options.localPath}`);
-		await fs.copy(`./${tempFolder}/repo/${fold}`, this.options.localPath, async (err) => {
+		await fse.copy(`${tempFolder}/repo/${fold}`, this.options.localPath, async (err) => {
 			if (err) return console.error(err);
 			if (this.options.debug) console.log(`[Github Updater] Deleting github-updater-temp folder...`);
 			return fs.remove(tempFolder);
