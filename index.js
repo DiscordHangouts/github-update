@@ -4,7 +4,6 @@ const path = require('path');
 const https = require('https');
 const { execSync } = require('child_process');
 const { Extract } = require('unzipper');
-const fs = require('fs-nextra');
 const fse = require('fs-extra');
 
 const { DEFAULTS, SEMVER } = require('./Constants');
@@ -35,9 +34,9 @@ class GithubUpdater {
 		if (!url.parse(this.options.baseURL)) throw `${this.options.baseURL} as a Base URL is not valid!`;
 
 
-		if (!fs.pathExists(this.options.localPath)) {
+		if (!fse.pathExistsSync(this.options.localPath)) {
 			if (this.options.debug) console.log(`[Github Updater] Creating ${this.options.localPath} because it does not exist yet.`);
-			fs.mkdir(this.options.localPath);
+			fse.mkdirSync(this.options.localPath);
 		}
 	}
 
@@ -87,9 +86,9 @@ class GithubUpdater {
 	async checkVersion(callback) {
 		const source = this.sources[this.options.source];
 
-		if (!await fs.pathExists(this.options.localPath)) {
+		if (!fse.pathExistsSync(this.options.localPath)) {
 			if (this.options.debug) console.log(`[Github Updater] Creating ${this.options.localPath} because it does not exist yet.`);
-			await fs.mkdir(this.options.localPath);
+			fse.mkdirSync(this.options.localPath);
 		}
 
 		let packageFile;
@@ -126,14 +125,14 @@ class GithubUpdater {
 		const source = this.sources[this.options.source];
 		const tempFolder = './github-updater-temp';
 
-		if (!await fs.pathExists(tempFolder)) {
+		if (!fse.pathExistsSync(tempFolder)) {
 			if (this.options.debug) console.log(`[Github Updater] Creating ${this.options.localPath} because it does not exist yet.`);
-			await fs.mkdir(tempFolder);
+			fse.mkdirSync(tempFolder);
 		}
 
 		if (this.options.debug) console.log(`[Github Updater] Getting: ${source.download}`);
 
-		const downloadRepo = fs.createWriteStream(`${tempFolder}/repo.zip`);
+		const downloadRepo = fse.createWriteStream(`${tempFolder}/repo.zip`);
 		https.get(source.download, (response) => {
 			response.pipe(downloadRepo);
 		});
@@ -156,7 +155,7 @@ class GithubUpdater {
 					});
 			});
 		}).on('error', (err) => {
-			fs.unlink(`${tempFolder}/repo.zip`);
+			fse.unlinkSync(`${tempFolder}/repo.zip`);
 			return callback(err.message);
 		});
 	}
@@ -166,7 +165,7 @@ class GithubUpdater {
 		await fse.copy(`${tempFolder}/repo/${fold}`, this.options.localPath, async (err) => {
 			if (err) return console.error(err);
 			if (this.options.debug) console.log(`[Github Updater] Deleting github-updater-temp folder...`);
-			return fs.remove(tempFolder);
+			return fse.removeSync(tempFolder);
 		});
 	}
 
