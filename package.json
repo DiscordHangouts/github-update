@@ -23,7 +23,7 @@
     "unzipper": "^0.10.11"
   },
   "devDependencies": {
-    "eslint": "^6.8.0"
+    "eslint": "^7.11.0"
   },
   "directories": {
     "example": "examples"
